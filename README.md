@@ -23,6 +23,11 @@ Install the below package to handl CORS (Cross Origin Resource Sharing)
 go get github.com/gin-contrib/cors
 ```
 
+Install the below package to connect and work with PostgreSQL DB
+```
+go get github.com/lib/pq
+```
+
 Install the below package to handle UUID values from the DB
 ```
 go get github.com/google/uuid
