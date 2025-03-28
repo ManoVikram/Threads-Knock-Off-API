@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/ManoVikram/Threads-Knock-Off-API/database"
+	"github.com/ManoVikram/Threads-Knock-Off-API/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
