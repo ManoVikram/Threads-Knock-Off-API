@@ -16,4 +16,7 @@ func RegisterRoutes(server *gin.Engine) {
 
 	// Update the username of the user
 	protectedRoutes.PATCH("/user/:id/username", handlers.UpdateUsernameHandler)
+	
+	// Create a new thread / post
+	protectedRoutes.POST("/post", handlers.PostThreadHandler)
 }
