@@ -10,6 +10,9 @@ func RegisterRoutes(server *gin.Engine) {
 	// Get details of a specific user
 	server.GET("/api/user/:id", handlers.GetUserDetailsHandler)
 
+	// Get all the threads
+	server.GET("/api/posts", handlers.GetAllThreadsHandler)
+	
 	// Protected routes
 	protectedRoutes := server.Group("/api")
 	protectedRoutes.Use(middlewares.AuthMiddleware())
@@ -18,5 +21,5 @@ func RegisterRoutes(server *gin.Engine) {
 	protectedRoutes.PATCH("/user/:id/username", handlers.UpdateUsernameHandler)
 	
 	// Create a new thread / post
-	protectedRoutes.POST("/post", handlers.PostThreadHandler)
+	protectedRoutes.POST("/posts", handlers.PostThreadHandler)
 }

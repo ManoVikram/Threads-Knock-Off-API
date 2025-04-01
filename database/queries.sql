@@ -83,6 +83,9 @@ CREATE TABLE IF NOT EXISTS posts (
   created_at timestamp with time zone DEFAULT now()
 );
 
+ALTER TABLE posts 
+ALTER COLUMN content SET NOT NULL;
+
 --
 -- Index for quickly fetching comments
 --
