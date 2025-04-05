@@ -12,14 +12,17 @@ func RegisterRoutes(server *gin.Engine) {
 
 	// Get all the threads
 	server.GET("/api/posts", handlers.GetAllThreadsHandler)
-	
+
 	// Protected routes
 	protectedRoutes := server.Group("/api")
 	protectedRoutes.Use(middlewares.AuthMiddleware())
 
 	// Update the username of the user
 	protectedRoutes.PATCH("/user/:id/username", handlers.UpdateUsernameHandler)
-	
+
 	// Create a new thread / post
 	protectedRoutes.POST("/posts", handlers.PostThreadHandler)
+
+	// Like / Un-like a post
+	protectedRoutes.POST("/posts/:id/like", handlers.ToggleLikePostHandler)
 }
