@@ -7,6 +7,7 @@ import (
 	"github.com/ManoVikram/Threads-Knock-Off-API/database"
 	"github.com/ManoVikram/Threads-Knock-Off-API/models"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func GetAllThreadsHandler(c *gin.Context) {
@@ -29,6 +30,29 @@ func GetAllThreadsHandler(c *gin.Context) {
 
 	var posts []gin.H
 
+	userIDStr, userLoggedIn := c.Get("userID")
+	var likedPostIDs map[string]bool
+
+	if userLoggedIn {
+		userID, err := uuid.Parse(userIDStr.(string))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
+			return
+		}
+
+		likeRows, err := database.DB.Query("SELECT post_id FROM likes WHERE user_id = $1", userID)
+		if err == nil {
+			defer likeRows.Close()
+			likedPostIDs = make(map[string]bool)
+			for likeRows.Next() {
+				var postID string
+				if err := likeRows.Scan(&postID); err == nil {
+					likedPostIDs[postID] = true
+				}
+			}
+		}
+	}
+
 	for rows.Next() {
 		var post models.Post
 		var user models.User
@@ -43,11 +67,18 @@ func GetAllThreadsHandler(c *gin.Context) {
 			return
 		}
 
+		// Check if this post was liked by the logged-in user
+		liked := false
+		if userLoggedIn && likedPostIDs != nil {
+			liked = likedPostIDs[post.ID.String()]
+		}
+
 		posts = append(posts, gin.H{
 			"id":             post.ID,
 			"user_id":        post.UserID,
 			"content":        post.Content,
 			"parent_id":      post.ParentID,
+			"liked_by_user":  liked,
 			"likes_count":    post.LikesCount,
 			"retweets_count": post.RetweetsCount,
 			"comments_count": post.CommentsCount,

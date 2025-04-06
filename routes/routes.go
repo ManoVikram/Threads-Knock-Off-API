@@ -11,7 +11,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.GET("/api/user/:id", handlers.GetUserDetailsHandler)
 
 	// Get all the threads
-	server.GET("/api/posts", handlers.GetAllThreadsHandler)
+	server.GET("/api/posts", middlewares.AuthMiddlewareLite(), handlers.GetAllThreadsHandler)
 
 	// Protected routes
 	protectedRoutes := server.Group("/api")
