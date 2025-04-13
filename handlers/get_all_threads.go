@@ -13,11 +13,12 @@ import (
 func GetAllThreadsHandler(c *gin.Context) {
 	query := `
 		SELECT 
-			p.id, p.user_id, p.content, p.parent_id, 
+			p.id, p.user_id, p.content, p.parent_id,
 			p.likes_count, p.retweets_count, p.comments_count, p.created_at,
 			u.id, u.name, u.email, u."emailVerified", u.image, u.username, u.bio
 		FROM posts p
 		JOIN users u ON p.user_id = u.id
+		WHERE p.parent_id IS NULL
 		ORDER BY p.created_at DESC;
 	`
 
