@@ -41,18 +41,31 @@ func PostThreadHandler(c *gin.Context) {
 	// Generate a new UUID for the post
 	post.UserID = userID
 
-	// Insert the post into the database
-	query := `
-		INSERT INTO posts (user_id, content)
-		VALUES ($1, $2)
-	`
+	// Check if this is a reply (has a valid parent_id)
+	if post.ParentID != nil {
+		query := `
+			INSERT INTO posts (user_id, content, parent_id)
+			VALUES ($1, $2, $3)
+		`
+		_, err = database.DB.Exec(query, post.UserID, post.Content, post.ParentID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create reply"})
+			return
+		}
 
-	_, err = database.DB.Exec(query, post.UserID, post.Content)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create post"})
-		return
+		c.JSON(http.StatusOK, gin.H{"message": "Reply posted successfully"})
+	} else {
+		// Regular thread post
+		query := `
+			INSERT INTO posts (user_id, content)
+			VALUES ($1, $2)
+		`
+		_, err = database.DB.Exec(query, post.UserID, post.Content)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create post"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Post created successfully"})
 	}
-
-	// Respond with a success message
-	c.JSON(http.StatusOK, gin.H{"message": "Post created successfully"})
 }
