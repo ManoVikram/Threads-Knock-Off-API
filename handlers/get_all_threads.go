@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/ManoVikram/Threads-Knock-Off-API/database"
+	"github.com/ManoVikram/Threads-Knock-Off-API/lib"
 	"github.com/ManoVikram/Threads-Knock-Off-API/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -89,20 +89,12 @@ func GetAllThreadsHandler(c *gin.Context) {
 				"name":           user.Name,
 				"email":          user.Email,
 				"email_verified": user.EmailVerified.Time.String(),
-				"image":          stringOrEmpty(user.Image),
-				"username":       stringOrEmpty(user.Username),
-				"bio":            stringOrEmpty(user.Bio),
+				"image":          lib.StringOrEmpty(user.Image),
+				"username":       lib.StringOrEmpty(user.Username),
+				"bio":            lib.StringOrEmpty(user.Bio),
 			},
 		})
 	}
 
 	c.JSON(http.StatusOK, posts)
-}
-
-// Helper function to return an empty string if sql.NullString is invalid
-func stringOrEmpty(ns sql.NullString) string {
-	if ns.Valid {
-		return ns.String
-	}
-	return ""
 }
