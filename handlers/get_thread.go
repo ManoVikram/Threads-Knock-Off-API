@@ -73,7 +73,7 @@ func GetThreadHandler(c *gin.Context) {
 		"retweets_count": post.RetweetsCount,
 		"comments_count": post.CommentsCount,
 		"created_at":     post.CreatedAt,
-		"has_liked":      hasLiked,
+		"liked_by_user":  hasLiked,
 		"user": gin.H{
 			"id":             user.ID,
 			"name":           user.Name,
