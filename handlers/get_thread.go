@@ -62,7 +62,7 @@ func GetThreadHandler(c *gin.Context) {
 	// Fetch comments on this post
 	commentQuery := `
 		SELECT 
-			p.id, p.user_id, p.content, p.likes_count, p.created_at,
+			p.id, p.user_id, p.content, p.likes_count, p.retweets_count, p.comments_count, p.created_at,
 			u.id, u.name, u.email, u."emailVerified", u.image, u.username, u.bio
 		FROM posts p
 		JOIN users u ON p.user_id = u.id
@@ -83,7 +83,7 @@ func GetThreadHandler(c *gin.Context) {
 		var comment models.Post
 		var commenter models.User
 		err := rows.Scan(
-			&comment.ID, &comment.UserID, &comment.Content, &comment.LikesCount, &comment.CreatedAt,
+			&comment.ID, &comment.UserID, &comment.Content, &comment.LikesCount, &comment.RetweetsCount, &comment.CommentsCount, &comment.CreatedAt,
 			&commenter.ID, &commenter.Name, &commenter.Email, &commenter.EmailVerified, &commenter.Image, &commenter.Username, &commenter.Bio,
 		)
 		if err != nil {
@@ -103,12 +103,14 @@ func GetThreadHandler(c *gin.Context) {
 		}
 
 		comments = append(comments, gin.H{
-			"id":            comment.ID,
-			"user_id":       comment.UserID,
-			"content":       comment.Content,
-			"likes_count":   comment.LikesCount,
-			"created_at":    comment.CreatedAt,
-			"liked_by_user": commentLiked,
+			"id":             comment.ID,
+			"user_id":        comment.UserID,
+			"content":        comment.Content,
+			"likes_count":    comment.LikesCount,
+			"retweets_count": comment.RetweetsCount,
+			"comments_count": comment.CommentsCount,
+			"created_at":     comment.CreatedAt,
+			"liked_by_user":  commentLiked,
 			"user": gin.H{
 				"id":             commenter.ID,
 				"name":           commenter.Name,
