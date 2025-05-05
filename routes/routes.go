@@ -31,4 +31,7 @@ func RegisterRoutes(server *gin.Engine) {
 
 	// Like / Un-like a post
 	protectedRoutes.POST("/posts/:id/like", handlers.ToggleLikePostHandler)
+	
+	// Get all user liked posts
+	protectedRoutes.GET("/liked-posts", handlers.GetUserLikesHandler)
 }
