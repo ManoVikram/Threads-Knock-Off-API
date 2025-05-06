@@ -61,7 +61,7 @@ func GetUserLikesHandler(c *gin.Context) {
 			"created_at":     createdAt,
 			"likes_count":    likesCount,
 			"comments_count": commentsCount,
-			"retweet_count":  retweetsCount,
+			"retweets_count":  retweetsCount,
 			"user": gin.H{
 				"id":       userID,
 				"name":     name,
