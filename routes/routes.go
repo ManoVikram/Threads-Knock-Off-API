@@ -19,6 +19,8 @@ func RegisterRoutes(server *gin.Engine) {
 	// Search for a posts or user
 	server.GET("/api/search", handlers.SearchHandler)
 
+	server.GET("/api/users/:username/posts", middlewares.AuthMiddlewareLite(), handlers.GetUserPostsHandler)
+
 	// Protected routes
 	protectedRoutes := server.Group("/api")
 	protectedRoutes.Use(middlewares.AuthMiddleware())
