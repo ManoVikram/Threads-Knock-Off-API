@@ -8,7 +8,7 @@ import (
 
 func RegisterRoutes(server *gin.Engine) {
 	// Get details of a specific user
-	server.GET("/api/user/:id", handlers.GetUserDetailsHandler)
+	server.GET("/api/user", handlers.GetUserDetailsHandler)
 
 	// Get all the threads
 	server.GET("/api/posts", middlewares.AuthMiddlewareLite(), handlers.GetAllThreadsHandler)

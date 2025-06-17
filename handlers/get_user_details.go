@@ -11,17 +11,38 @@ import (
 )
 
 func GetUserDetailsHandler(c *gin.Context) {
-	userID := c.Param("id") // Assuming ID is passed in URL
+	userID := c.Query("userid")
+	username := c.Query("username")
+
+	if userID == "" && username == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Either id or username must be provided"})
+		return
+	}
 
 	var user models.User
-	query := `SELECT id, name, email, "emailVerified", image, username, bio FROM users WHERE id = $1`
-	err := database.DB.QueryRow(query, userID).Scan(
+	var query string
+	var args []any
+
+	if userID != "" && username != "" {
+		query = `SELECT id, name, email, "emailVerified", image, username, follower_count, following_count, bio FROM users WHERE id = $1 AND username = $2`
+		args = append(args, userID, username)
+	} else if userID != "" {
+		query = `SELECT id, name, email, "emailVerified", image, username, follower_count, following_count, bio FROM users WHERE id = $1`
+		args = append(args, userID)
+	} else {
+		query = `SELECT id, name, email, "emailVerified", image, username, follower_count, following_count, bio FROM users WHERE username = $1`
+		args = append(args, username)
+	}
+
+	err := database.DB.QueryRow(query, args...).Scan(
 		&user.ID,
 		&user.Name,
 		&user.Email,
 		&user.EmailVerified,
 		&user.Image,
 		&user.Username,
+		&user.FollowerCount,
+		&user.FollowingCount,
 		&user.Bio,
 	)
 
@@ -34,19 +55,21 @@ func GetUserDetailsHandler(c *gin.Context) {
 		return
 	}
 
-	// Convert sql.NullString and sql.NullTime to regular JSON-friendly types
+	// Convert sql.Null types to safe values
 	response := gin.H{
-		"id":    user.ID,
-		"name":  user.Name,
-		"email": user.Email,
+		"id":              user.ID,
+		"name":            user.Name,
+		"email":           user.Email,
+		"follower_count":  user.FollowerCount,
+		"following_count": user.FollowingCount,
 	}
 
 	if user.EmailVerified.Valid {
-		emailVerified := user.EmailVerified.Time.Format(time.RFC3339)
-		response["emailVerified"] = emailVerified
+		response["emailVerified"] = user.EmailVerified.Time.Format(time.RFC3339)
 	} else {
 		response["emailVerified"] = ""
 	}
+
 	response["image"] = user.Image.String
 	response["username"] = user.Username.String
 	response["bio"] = user.Bio.String
