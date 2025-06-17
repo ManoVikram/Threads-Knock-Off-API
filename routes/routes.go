@@ -36,4 +36,6 @@ func RegisterRoutes(server *gin.Engine) {
 	
 	// Get all user liked posts
 	protectedRoutes.GET("/liked-posts", handlers.GetUserLikesHandler)
+
+	protectedRoutes.POST("/follow/:username", handlers.ToggleFollowHandler)
 }
